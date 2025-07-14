@@ -1,0 +1,25 @@
+[project]
+name = "resume_enhancer_ai"
+version = "0.1.0"
+description = "resume-enhancer-ai using crewAI"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "crewai[tools]>=0.140.0,<1.0.0",
+    "gradio>=5.36.2",
+    "pypdf>=5.8.0",
+]
+
+[project.scripts]
+resume_enhancer_ai = "resume_enhancer_ai.main:run"
+run_crew = "resume_enhancer_ai.main:run"
+train = "resume_enhancer_ai.main:train"
+replay = "resume_enhancer_ai.main:replay"
+test = "resume_enhancer_ai.main:test"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.crewai]
+type = "crew"

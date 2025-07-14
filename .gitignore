@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+.env
+
+# VS Code
+.vscode/
+
+# Output & Input files
+output/
+input/
+*.pdf
+*.md
+
+# CrewAI runtime files
+.history/
+
+# OS
+.DS_Store
