@@ -6,19 +6,11 @@ from typing import List
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
 
 @CrewBase
-class ResumeEnhancerAi():
-    """ResumeEnhancerAi crew"""
+class ATSCheckCrew():
+    """ATSCheck crew"""
 
     agents_config = 'config/agents.yaml'
-    tasks_config = 'config/tasks.yaml'
-
-    # Learn more about YAML configuration files here:
-    # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
-    # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
-    
-    # If you would like to add tools to your agents, you can learn more about it here:
-    # https://docs.crewai.com/concepts/agents#agent-tools
-
+    tasks_config = 'config/tasks_ats.yaml'
 
     @agent
     def ats_checker(self) -> Agent:
@@ -26,7 +18,30 @@ class ResumeEnhancerAi():
             config=self.agents_config['ats_checker'], # type: ignore[index]
             verbose=True
         )
+
+    @task
+    def check_ats_compatibility(self) -> Task:
+        return Task(
+            config=self.tasks_config['check_ats_compatibility'], # type: ignore[index]
+        )
+
+    @crew
+    def crew(self) -> Crew:
+        """Creates the ATSCheck crew"""
+        return Crew(
+            agents=[self.ats_checker()],
+            tasks=[self.check_ats_compatibility()],
+            process=Process.sequential,
+            verbose=True
+        )
     
+@CrewBase
+class ResumeEnhancerCrew():
+    """ResumeEnhancer crew"""
+
+    agents_config = 'config/agents.yaml'
+    tasks_config = 'config/tasks_enhancer.yaml'
+
     @agent
     def resume_enhancer_initial(self) -> Agent:
         return Agent(
@@ -41,17 +56,6 @@ class ResumeEnhancerAi():
             verbose=True
         )
 
-    # To learn more about structured task outputs,
-    # task dependencies, and task callbacks, check out the documentation:
-    # https://docs.crewai.com/concepts/tasks#overview-of-a-task
-
-
-    @task
-    def check_ats_compatibility(self) -> Task:
-        return Task(
-            config=self.tasks_config['check_ats_compatibility'], # type: ignore[index]
-        )
-    
     @task
     def enhance_resume_initial(self) -> Task:
         return Task(
@@ -64,17 +68,13 @@ class ResumeEnhancerAi():
             config=self.tasks_config['enhance_resume_final'], # type: ignore[index]
         )
 
-
     @crew
     def crew(self) -> Crew:
-        """Creates the ResumeEnhancerAi crew"""
-        # To learn how to add knowledge sources to your crew, check out the documentation:
-        # https://docs.crewai.com/concepts/knowledge#what-is-knowledge
-
+        """Creates the ResumeEnhancer crew"""
         return Crew(
-            agents=self.agents, # Automatically created by the @agent decorator
-            tasks=self.tasks, # Automatically created by the @task decorator
+            agents=[self.resume_enhancer_initial(), self.resume_enhancer_final()],
+            tasks=[self.enhance_resume_initial(), self.enhance_resume_final()],
             process=Process.sequential,
             verbose=True,
-            # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
         )
+

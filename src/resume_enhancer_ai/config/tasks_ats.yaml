@@ -1,0 +1,9 @@
+check_ats_compatibility:
+  description: >
+    Check the {resume} for ATS compatibility and provide feedback on how to improve it.
+  expected_output: >
+    A detailed report on the ATS compatibility of the {resume}, including specific
+    suggestions for improvement.
+  agent: ats_checker
+  output_file: output/ats_score_report.md
+
