@@ -2,11 +2,13 @@
 import sys
 import warnings
 
+from dotenv import load_dotenv
 from datetime import datetime
 from resume_enhancer_ai.crew import ATSCheckCrew, ResumeEnhancerCrew
 from pypdf import PdfReader
 import gradio as gr
 import re
+
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
@@ -25,8 +27,11 @@ def load_resume():
     Load the resume from a PDF file.
     """
     try:
-        reader = PdfReader("input/linkedin.pdf")
-        return "\n".join([page.extract_text() for page in reader.pages if page.extract_text()])
+        reader = PdfReader("input/resume.pdf")
+        resume_content = "\n".join([page.extract_text() for page in reader.pages if page.extract_text()])
+        if not resume_content or len(resume_content.strip()) < 100:
+            raise ValueError("Resume content seems empty or too short. Please upload a valid resume PDF.")
+        return resume_content.strip()
     except Exception as e:
         raise Exception(f"An error occurred while loading the resume: {e}")
 
@@ -38,6 +43,7 @@ def extract_score(text:str) -> float:
 
 
 def run():
+    load_dotenv(override=True)
     """
     Run the crew.
     """
