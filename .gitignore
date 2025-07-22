@@ -13,7 +13,6 @@ __pycache__/
 output/
 input/
 *.pdf
-*.md
 
 # CrewAI runtime files
 .history/
